@@ -77,6 +77,35 @@ export const CartProvider = ({ children }) => {
       showToast(`Added to Hearted Curations`, "success");
     }
   };
+  // -- Dynamic Orders Management --
+  const [orders, setOrders] = useState(() => {
+    const saved = localStorage.getItem("curator_orders");
+    return saved ? JSON.parse(saved) : [];
+  });
+
+  useEffect(() => {
+    localStorage.setItem("curator_orders", JSON.stringify(orders));
+  }, [orders]);
+
+  const addOrder = (order) => {
+    setOrders((prev) => [order, ...prev]);
+  };
+
+  const updateOrderStatus = (orderId, newStatus) => {
+    setOrders((prev) =>
+      prev.map((order) => {
+        if (order.id === orderId) {
+          let icon = "schedule";
+          if (newStatus === "Preparing") icon = "skillet";
+          else if (newStatus === "Delivered") icon = "check_circle";
+          else if (newStatus === "Out for Delivery") icon = "local_shipping";
+          else if (newStatus === "Cancelled") icon = "cancel";
+          return { ...order, status: newStatus, icon };
+        }
+        return order;
+      })
+    );
+  };
 
   const clearCart = () => {
     setCartItems([]);
@@ -103,7 +132,10 @@ export const CartProvider = ({ children }) => {
         heartedItems,
         toggleHeart,
         toast,
-        showToast
+        showToast,
+        orders,
+        addOrder,
+        updateOrderStatus
       }}
     >
       {children}

@@ -21,6 +21,8 @@ import ProfilePage from "./pages/ProfilePage";
 import ContactPage from "./pages/ContactPage";
 import { CartProvider } from "./context/CartContext";
 import { PRODUCTS } from "./data/products";
+import AdminPage from "./pages/AdminPage";
+import AdminDashboard from "./pages/AdminDashboard";
 
 import { AnimatePresence } from "framer-motion";
 import PageTransition from "./components/PageTransition";
@@ -40,31 +42,35 @@ const App = () => {
       popular: PRODUCTS.filter(p => p.category === "Popular" || !p.category), // Defaulting some to popular
       trending: PRODUCTS.filter(p => p.trending),
     }),
-    []
+    [location.pathname]
   );
+
+  const isAdminRoute = location.pathname.startsWith("/arrifoods/control/admin");
 
   return (
     <CartProvider>
       <div className="bg-surface font-body text-on-surface selection:bg-primary-fixed selection:text-on-primary-fixed scroll-smooth overflow-x-hidden">
         <Toast />
-        <PillNav
-          logo="https://cdn-icons-png.flaticon.com/512/3448/3448636.png"
-          logoAlt="The Culinary Curator"
-          items={[
-            { label: "Home", href: "/" },
-            { label: "Categories", href: "/categories" },
-            { label: "The Journal", href: "/blog" },
-            { label: "About", href: "/about" },
-            { label: "Contact", href: "/contact" },
-          ]}
-          activeHref={location.pathname}
-          baseColor="#a04100"
-          pillColor="#ffffff"
-          hoveredPillTextColor="#ffffff"
-          pillTextColor="#1c1b1b"
-          className="max-md:w-full"
-          initialLoadAnimation={false}
-        />
+        {!isAdminRoute && (
+          <PillNav
+            logo="https://cdn-icons-png.flaticon.com/512/3448/3448636.png"
+            logoAlt="The Culinary Curator"
+            items={[
+              { label: "Home", href: "/" },
+              { label: "Categories", href: "/categories" },
+              { label: "The Journal", href: "/blog" },
+              { label: "About", href: "/about" },
+              { label: "Contact", href: "/contact" },
+            ]}
+            activeHref={location.pathname}
+            baseColor="#a04100"
+            pillColor="#ffffff"
+            hoveredPillTextColor="#ffffff"
+            pillTextColor="#1c1b1b"
+            className="max-md:w-full"
+            initialLoadAnimation={false}
+          />
+        )}
 
         <AnimatePresence mode="wait">
           <Routes location={location} key={location.pathname}>
@@ -97,10 +103,12 @@ const App = () => {
             <Route path="/blog" element={<PageTransition><BlogPage /></PageTransition>} />
             <Route path="/profile/:tab?" element={<PageTransition><ProfilePage /></PageTransition>} />
             <Route path="/contact" element={<PageTransition><ContactPage /></PageTransition>} />
+            <Route path="/arrifoods/control/admin" element={<PageTransition><AdminPage /></PageTransition>} />
+            <Route path="/arrifoods/control/admin/dashboard" element={<PageTransition><AdminDashboard /></PageTransition>} />
           </Routes>
         </AnimatePresence>
 
-        <Footer />
+        {!isAdminRoute && <Footer />}
       </div>
     </CartProvider>
   );

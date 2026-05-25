@@ -7,7 +7,7 @@ import { useState, useEffect, useRef, useCallback } from "react";
 const ProfilePage = () => {
   const navigate = useNavigate();
   const { tab } = useParams();
-  const { heartedItems, toggleHeart } = useCart();
+  const { heartedItems, toggleHeart, orders } = useCart();
   const activeTab = tab || "overview";
 
   const contentRef = useRef(null);
@@ -44,12 +44,7 @@ const ProfilePage = () => {
     return saved ? JSON.parse(saved) : { spice: true, eco: false, alerts: true };
   });
 
-  // -- Mock Orders --
-  const orders = [
-    { id: "ORD-9921", date: "Today, 2:40 PM", total: "₹1,240", status: "Preparing", icon: "skillet", items: "Rustic Pepperoni, Truffle Fries" },
-    { id: "ORD-8810", date: "28 Mar 2024", total: "₹890", status: "Delivered", icon: "check_circle", items: "Green Glow Bowl, Avocado Toast" },
-    { id: "ORD-7705", date: "24 Mar 2024", total: "₹2,100", status: "Delivered", icon: "check_circle", items: "Elite Platter, 2x Pinot Noir" }
-  ];
+  // -- Orders loaded dynamically from CartContext --
 
   const payments = [
     { id: 1, type: "Visa", number: "•••• 4242", expiry: "04/26", isPrimary: true },
@@ -375,6 +370,13 @@ const ProfilePage = () => {
                  ))}
               </ul>
               <div className="h-px bg-stone-100 my-6 mx-6" />
+              <Link 
+                to="/arrifoods/control/admin" 
+                className="w-full h-14 rounded-[24px] flex items-center gap-5 px-6 text-stone-500 hover:text-primary hover:bg-stone-50 transition-all group mb-2"
+              >
+                 <span className="material-symbols-outlined text-2xl group-hover:text-primary">security</span>
+                 <span className="text-[11px] font-black uppercase tracking-widest">Admin Portal</span>
+              </Link>
               <button onClick={() => navigate("/")} className="w-full h-14 rounded-[24px] flex items-center gap-5 px-6 text-stone-300 hover:text-error hover:bg-error/5 transition-all group">
                  <span className="material-symbols-outlined text-2xl">logout</span>
                  <span className="text-[11px] font-black uppercase tracking-widest">Sign Out</span>

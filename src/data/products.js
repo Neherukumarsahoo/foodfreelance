@@ -1,4 +1,4 @@
-export const PRODUCTS = [
+const DEFAULT_PRODUCTS = [
   // Specials
   {
     id: "rustic-pepperoni",
@@ -7,7 +7,7 @@ export const PRODUCTS = [
     badge: "20% OFF",
     badgeColor: "bg-secondary-container",
     rating: "4.8",
-    price: "â‚¹1,249",
+    price: "₹1,249",
     delivery: "15-20 Mins Delivery",
     category: "Specials",
     trending: true
@@ -19,7 +19,7 @@ export const PRODUCTS = [
     badge: "Chef's Choice",
     badgeColor: "bg-primary-container",
     rating: "4.9",
-    price: "â‚¹1,038",
+    price: "₹1,038",
     delivery: "10-15 Mins Delivery",
     category: "Specials"
   },
@@ -28,7 +28,7 @@ export const PRODUCTS = [
     title: "The Curator Burger",
     img: "https://lh3.googleusercontent.com/aida-public/AB6AXuBIQOPMQpYERlhhcYbV3_YEDDLwuGGkGDrnsySWaQKEpezMkwCnZBfYKIKUj5VDtfobG-KbKwzkjhBI_CmJ6wHT-YPH1AKe5fSMx9SoTbaUDoT25SSIccx02LEZNIl6iCpfJKse8lFR_k_ESEN_4ZawSqrq6tLC5CZtLRRa6UxsQ1PFbW_yyyESugmjgEVCGn0lKGlL1co7gF3s0ITFbjqqS1ZFAR9Aujes0ykEh-u6eOlLX6BXEDyWo2OFMWdu1oYxaoyLCJGRexI",
     rating: "4.7",
-    price: "â‚¹1,328",
+    price: "₹1,328",
     delivery: "20-25 Mins Delivery",
     category: "Specials"
   },
@@ -39,7 +39,7 @@ export const PRODUCTS = [
     badge: "Popular",
     badgeColor: "bg-tertiary",
     rating: "5.0",
-    price: "â‚¹747",
+    price: "₹747",
     delivery: "30-40 Mins Delivery",
     category: "Specials"
   },
@@ -51,7 +51,7 @@ export const PRODUCTS = [
     badge: "50% OFF",
     badgeColor: "bg-error",
     rating: "4.9",
-    price: "â‚¹1,576",
+    price: "₹1,576",
     delivery: "25-30 Mins Delivery",
     category: "Price Drop",
     trending: true
@@ -63,7 +63,7 @@ export const PRODUCTS = [
     badge: "30% OFF",
     badgeColor: "bg-error",
     rating: "4.6",
-    price: "â‚¹930",
+    price: "₹930",
     delivery: "15-20 Mins Delivery",
     category: "Price Drop"
   },
@@ -74,7 +74,7 @@ export const PRODUCTS = [
     badge: "40% OFF",
     badgeColor: "bg-error",
     rating: "4.8",
-    price: "â‚¹1,120",
+    price: "₹1,120",
     delivery: "18-24 Mins Delivery",
     category: "Price Drop"
   },
@@ -85,7 +85,7 @@ export const PRODUCTS = [
     badge: "Limited Deal",
     badgeColor: "bg-error",
     rating: "4.7",
-    price: "â‚¹1,340",
+    price: "₹1,340",
     delivery: "28-35 Mins Delivery",
     category: "Price Drop"
   },
@@ -97,7 +97,7 @@ export const PRODUCTS = [
     badge: "New",
     badgeColor: "bg-primary",
     rating: "5.0",
-    price: "â‚¹1,992",
+    price: "₹1,992",
     delivery: "35-45 Mins Delivery",
     category: "New Arrivals"
   },
@@ -108,7 +108,7 @@ export const PRODUCTS = [
     badge: "Chef's Pick",
     badgeColor: "bg-tertiary",
     rating: "4.8",
-    price: "â‚¹1,080",
+    price: "₹1,080",
     delivery: "14-20 Mins Delivery",
     category: "New Arrivals"
   },
@@ -120,7 +120,7 @@ export const PRODUCTS = [
     badge: "Popular",
     badgeColor: "bg-tertiary",
     rating: "4.9",
-    price: "â‚¹980",
+    price: "₹980",
     delivery: "15-20 Mins Delivery",
     category: "Popular"
   },
@@ -131,7 +131,7 @@ export const PRODUCTS = [
     badge: "Chef's Choice",
     badgeColor: "bg-primary-container",
     rating: "4.8",
-    price: "â‚¹1,420",
+    price: "₹1,420",
     delivery: "25-30 Mins Delivery",
     category: "Popular"
   },
@@ -142,7 +142,7 @@ export const PRODUCTS = [
     badge: "Light",
     badgeColor: "bg-secondary-container",
     rating: "4.7",
-    price: "â‚¹860",
+    price: "₹860",
     delivery: "12-18 Mins Delivery",
     category: "Popular"
   },
@@ -153,7 +153,7 @@ export const PRODUCTS = [
     badge: "Premium",
     badgeColor: "bg-primary",
     rating: "5.0",
-    price: "â‚¹1,990",
+    price: "₹1,990",
     delivery: "20-25 Mins Delivery",
     category: "Popular"
   },
@@ -165,7 +165,7 @@ export const PRODUCTS = [
     badge: "Trending Now",
     badgeColor: "bg-secondary",
     rating: "4.7",
-    price: "â‚¹1,161",
+    price: "₹1,161",
     delivery: "15-20 Mins Delivery",
     category: "Trending",
     trending: true
@@ -177,19 +177,42 @@ export const PRODUCTS = [
     badge: "Spicy",
     badgeColor: "bg-secondary-container",
     rating: "4.9",
-    price: "â‚¹770",
+    price: "₹770",
     delivery: "10-15 Mins Delivery",
     category: "Trending",
     trending: true
   }
 ];
 
+const getStoredProducts = () => {
+  if (typeof window === "undefined") return DEFAULT_PRODUCTS;
+  const stored = localStorage.getItem("curator_products");
+  if (stored) {
+    try {
+      return JSON.parse(stored);
+    } catch (e) {
+      console.error("Error parsing stored products", e);
+    }
+  }
+  localStorage.setItem("curator_products", JSON.stringify(DEFAULT_PRODUCTS));
+  return DEFAULT_PRODUCTS;
+};
+
+export const PRODUCTS = getStoredProducts();
+
+export const saveProducts = (newProducts) => {
+  localStorage.setItem("curator_products", JSON.stringify(newProducts));
+  PRODUCTS.length = 0;
+  PRODUCTS.push(...newProducts);
+};
+
 export const getTrendingProducts = () => PRODUCTS.filter(p => p.trending);
+
 export const searchProducts = (query) => {
   if (!query) return [];
   const lowQuery = query.toLowerCase();
   return PRODUCTS.filter(p => 
-    p.title.toLowerCase().includes(lowQuery) || 
-    p.category.toLowerCase().includes(lowQuery)
+    (p.title || "").toLowerCase().includes(lowQuery) || 
+    (p.category || "").toLowerCase().includes(lowQuery)
   );
 };

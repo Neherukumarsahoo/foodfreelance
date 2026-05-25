@@ -4,7 +4,7 @@ import { Search, Filter, SlidersHorizontal, Star, ShoppingBag, ArrowRight } from
 import { PRODUCTS } from "../data/products";
 import ProductCard from "../components/ProductCard";
 import { ProductSkeleton } from "../components/Skeleton";
-import { AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 
 const CategoryPage = () => {
   const navigate = useNavigate();

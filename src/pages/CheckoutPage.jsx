@@ -7,7 +7,7 @@ import { motion, AnimatePresence } from "framer-motion";
 const parsePrice = (priceStr) => parseFloat(priceStr.replace(/[^\d.-]/g, "")) || 0;
 
 const CheckoutPage = () => {
-  const { cartItems, subtotal, clearCart } = useCart();
+  const { cartItems, subtotal, clearCart, addOrder } = useCart();
   const navigate = useNavigate();
   const [step, setStep] = useState(1); // 1: Address, 2: Review, 3: Payment
   
@@ -23,14 +23,35 @@ const CheckoutPage = () => {
   const totalPayable = subtotal + deliveryFee + platformFee;
 
   const handlePay = () => {
+    const orderId = `ORD-${Math.floor(100000 + Math.random() * 900000)}`;
+    const itemsListString = cartItems.map(item => `${item.quantity > 1 ? `${item.quantity}x ` : ''}${item.title || item.name}`).join(", ");
+    
+    const dateOptions = { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: true };
+    const dateStr = new Date().toLocaleString('en-US', dateOptions);
+    
+    const persistentOrder = {
+      id: orderId,
+      date: dateStr,
+      total: `₹${totalPayable.toLocaleString()}`,
+      status: "Preparing",
+      icon: "skillet",
+      items: itemsListString,
+      orderDetails: cartItems,
+      address: addresses.find(a => a.id === selectedAddress)
+    };
+
+    if (addOrder) addOrder(persistentOrder);
+
     const orderItems = [...cartItems];
     const orderTotal = totalPayable;
     if (clearCart) clearCart();
+    
     navigate("/success", { 
       state: { 
         orderItems, 
         orderTotal,
-        address: addresses.find(a => a.id === selectedAddress)
+        address: addresses.find(a => a.id === selectedAddress),
+        orderId
       } 
     });
   };

@@ -2,38 +2,7 @@ import React, { useMemo, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import ProductCarousel from "../components/ProductCarousel";
-
-// Common product data used across the app (ideally would be in a store/context)
-const commonProducts = {
-  specials: [
-    {
-      title: "Rustic Pepperoni",
-      img: "https://lh3.googleusercontent.com/aida-public/AB6AXuDMwk2O8V0kNHz0ixFsEu97Y3M2FR8bDBf3Ldy96JxyiP5SfFlrpBQXgSv_n5LvEY5rlY8W3uvkMQ9CBN79TeIUJleoiy69iONe4cTj2NC2TxvP_NwJZkF1GsCGwtDzjOLt-GiRrVss8iN1GvDhqXqiHzSf8eDsoxO1sJxEG8DZfsdHmYnS5fyi1g-ZYQ_wcIRuqOPNEzV-bi6dumMjyNbj1RYjcxJfKcXu7zrpAHEBZR3rDF8pcjCx3s4Pe_mv_wr6hrnBoOxxp7c",
-      badge: "20% OFF",
-      rating: "4.8",
-      price: "₹1,249",
-      delivery: "15-20 Mins Delivery",
-      description: "Hand-stretched artisan dough topped with premium dry-aged pepperoni, San Marzano tomato sauce, and a blend of three aged cheeses. Wood-fired to perfection with a hint of smoky flavor.",
-    },
-    {
-      title: "Green Glow Bowl",
-      img: "https://lh3.googleusercontent.com/aida-public/AB6AXuCr9RAdpf7ye5SVsKbab_NtGE3gMmnbZUNyqC9ayqT8Y3Tf2vEUCwtUY4-i8AVLO3zWvHDQcZJT6pqDMMQkA_aGyD-F_7F77IxUsH9SlrG30hLTmP8t1AkKQPM49OXRh4aJL903xkL8ESbZgsM09M7tMu4Wby0jSn4hQNmK_ttvJmgbQc9FlLtj8Ol-GjT89Hza3tXEusB1Va53Q6Lz6s3Wsem6-iYshDOImTPD0mHb4A07W2IZWMK6g3Xom44dAR2m-SdudHe77Sk",
-      badge: "Chef's Choice",
-      rating: "4.9",
-      price: "₹1,038",
-      delivery: "10-15 Mins Delivery",
-      description: "A nutrient-rich power bowl featuring organic kale, quinoa, avocado slices, roasted chickpeas, and a signature citrus-tahini dressing. The perfect balance of health and gourmet taste.",
-    },
-    {
-      title: "The Curator Burger",
-      img: "https://lh3.googleusercontent.com/aida-public/AB6AXuBIQOPMQpYERlhhcYbV3_YEDDLwuGGkGDrnsySWaQKEpezMkwCnZBfYKIKUj5VDtfobG-KbKwzkjhBI_CmJ6wHT-YPH1AKe5fSMx9SoTbaUDoT25SSIccx02LEZNIl6iCpfJKse8lFR_k_ESEN_4ZawSqrq6tLC5CZtLRRa6UxsQ1PFbW_yyyESugmjgEVCGn0lKGlL1co7gF3s0ITFbjqqS1ZFAR9Aujes0ykEh-u6eOlLX6BXEDyWo2OFMWdu1oYxaoyLCJGRexI",
-      rating: "4.7",
-      price: "₹1,328",
-      delivery: "20-25 Mins Delivery",
-      description: "A masterclass in burger craft. Wagyu beef patty, truffle-infused caramelized onions, swiss emmental, and house-made brioche bun. Served with sea salt parmesan crisps.",
-    },
-  ],
-};
+import { PRODUCTS } from "../data/products";
 
 const VisibilitySelector = () => (
   <div className="bg-surface-container rounded-3xl p-6 border border-outline/10 shadow-sm">
@@ -57,13 +26,34 @@ const ProductDetails = () => {
   const { id } = useParams();
   const { addToCart, toggleHeart, heartedItems } = useCart();
 
-  // Find product by title (demo logic)
+  // Find product by id or by slug
   const productData = useMemo(() => {
-    const all = [...commonProducts.specials].find(p => p.title.toLowerCase().replace(/ /g, '-') === id);
-    return all || commonProducts.specials[0]; // Fallback to first
+    const found = PRODUCTS.find(p => p.id === id || p.title.toLowerCase().replace(/ /g, '-') === id);
+    if (found) {
+      return {
+        ...found,
+        description: found.description || `Indulge in our exquisite ${found.title}, prepared by our culinary artisans using premium ingredients, organic textures, and absolute gourmet design to satisfy your premium palate.`
+      };
+    }
+    // Fallback to first product
+    return PRODUCTS[0] ? {
+      ...PRODUCTS[0],
+      description: PRODUCTS[0].description || "Artisanal culinary preparation made with premium sourced ingredients."
+    } : {
+      title: "Gourmet Selection",
+      price: "₹999",
+      rating: "4.9",
+      delivery: "15-20 Mins Delivery",
+      description: "Premium selection crafted by our master chefs.",
+      img: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=1200&q=80"
+    };
   }, [id]);
 
   const isHearted = heartedItems.some(h => h.title === productData.title);
+
+  const specials = useMemo(() => {
+    return PRODUCTS.filter(p => p.category === "Specials");
+  }, []);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -106,7 +96,7 @@ const ProductDetails = () => {
           <div className="flex items-center gap-6 mb-8">
             <div className="flex items-center gap-2 bg-yellow-400/10 text-yellow-500 px-4 py-2 rounded-full font-bold">
               <span className="material-symbols-outlined filled text-xl">star</span>
-              {productData.rating}
+              {productData.rating || "4.8"}
             </div>
             <div className="text-3xl font-black text-on-surface">
               {productData.price}
@@ -114,7 +104,7 @@ const ProductDetails = () => {
           </div>
 
           <p className="text-on-surface-variant text-lg leading-relaxed mb-10 max-w-xl">
-             {productData.description || "Discover the finest culinary craft with our signature products. Every ingredient is sourced sustainably to ensure the highest quality experience for your palate."}
+             {productData.description}
           </p>
 
           <div className="flex flex-col gap-6">
@@ -129,7 +119,7 @@ const ProductDetails = () => {
                 </button>
                 <button 
                   onClick={() => toggleHeart(productData)}
-                  className={`h-16 w-16 rounded-full border-2 border-primary/20 flex items-center justify-center transition hover:bg-primary/5 active:scale-90 ${isHearted ? 'text-primary' : 'text-primary'}`}
+                  className={`h-16 w-16 rounded-full border-2 border-primary/20 flex items-center justify-center transition hover:bg-primary/5 active:scale-90 text-primary`}
                 >
                   <span className={`material-symbols-outlined ${isHearted ? 'filled' : ''}`}>favorite</span>
                 </button>
@@ -137,7 +127,7 @@ const ProductDetails = () => {
 
              <div className="flex items-center gap-4 text-sm font-semibold text-on-surface-variant px-4">
                 <span className="material-symbols-outlined text-primary">schedule</span>
-                {productData.delivery}
+                {productData.delivery || "20-30 Mins Delivery"}
                 <span className="w-1.5 h-1.5 rounded-full bg-outline/40"></span>
                 <span className="material-symbols-outlined text-primary">eco</span>
                 Sustainable Sourcing
@@ -150,12 +140,14 @@ const ProductDetails = () => {
       </div>
 
       {/* Special For You Section at Bottom */}
-      <div className="border-t border-outline/10 mt-10">
-        <ProductCarousel 
-          title="Specials For You" 
-          items={commonProducts.specials} 
-        />
-      </div>
+      {specials.length > 0 && (
+        <div className="border-t border-outline/10 mt-10">
+          <ProductCarousel 
+            title="Specials For You" 
+            items={specials} 
+          />
+        </div>
+      )}
     </main>
   );
 };

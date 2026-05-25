@@ -4,8 +4,8 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 const SuccessPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { orderItems, orderTotal, address } = location.state || {};
-  const [orderId] = useState(() => `ORD-${Math.floor(100000 + Math.random() * 900000)}`);
+  const { orderItems, orderTotal, address, orderId: passedOrderId } = location.state || {};
+  const [orderId] = useState(() => passedOrderId || `ORD-${Math.floor(100000 + Math.random() * 900000)}`);
 
   // Force dark background on body only for this page
   useEffect(() => {

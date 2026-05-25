@@ -78,6 +78,7 @@ const Footer = () => {
             <li><Link to="/categories" className="hover:text-white transition-colors">Curated Categories</Link></li>
             <li><Link to="/cart" className="hover:text-white transition-colors">Your Order Tray</Link></li>
             <li><Link to="/contact" className="hover:text-white transition-colors font-bold text-primary">Contact Us</Link></li>
+            <li><Link to="/arrifoods/control/admin" className="hover:text-white transition-colors text-[10px] tracking-widest font-black uppercase text-stone-600 hover:text-stone-400">Admin Console</Link></li>
           </ul>
         </div>
 
